@@ -21,25 +21,26 @@ def safely_move_file(source_name,target_name):
         sys.exit(1)
 
 
-def move_duplicate_files(duplicate_files, folder_for_duplicates, folder_with_new_files, ):
+def move_duplicate_files(duplicate_files, folder_for_duplicates, folders_per_category, find_duplicates_among_existing):
     # List to hold files that were moved
     moved_files = []
 
-    print(f'moving duplicates of new files to {folder_for_duplicates}')
+    print(f'moving duplicate files to {folder_for_duplicates}')
     
     for file in duplicate_files:
-        source_path = os.path.join(folder_with_new_files, file['relative_path'])
+        root_path = folders_per_category[file['category']]
+        source_path = os.path.join(root_path, file['relative_path'])
         source_name = os.path.join(source_path, file['name'])
         source_name = os.path.normpath(source_name)
         target_path = os.path.join(folder_for_duplicates, file['relative_path'])
         target_name = os.path.join(target_path, file['name'])
         target_name = os.path.normpath(target_name)
 
-        if file['category'] != "new":
-            print("this should not have happened.")
+        if file['category'] != "new" and not find_duplicates_among_existing:
+            print(f"Inconsistency in list of files to be moved. No existing files shall be moved, but file '{file['name']}' is among existing files. Aborting program.")
             sys.exit(2)
 
-        safely_move_file(source_name,target_name)
+        #safely_move_file(source_name,target_name)
         moved_files.append(file)
 
     print(f"  {len(moved_files)} duplicates among new files have been moved.")

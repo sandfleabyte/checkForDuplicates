@@ -2,28 +2,28 @@ import os
 import json
 
 
-def load_list_of_files(json_file, folder_with_existing_files):
+def load_list_of_files(json_file, folder_with_files):
     list_of_files = []
     with open(json_file, 'r') as f:
         loaded_dictionary = json.load(f)
-        # in case a folder for existing files has been specified, check if json file was created for this folder
-        if folder_with_existing_files is not None:
-            if folder_with_existing_files != loaded_dictionary['folder_with_existing_files']:
-                raise ValueError(f"json file '{json_file}' refers to a different directory than the supplied argument for existing files directory '{folder_with_existing_files}'")
-            list_of_files = loaded_dictionary['existing_files']
-    print(f"Loaded list of {len(list_of_files)} existing files from {json_file}")
-    return list_of_files
+        # in case a folder for files has been specified, check if json file was created for this folder
+        if folder_with_files is not None:
+            if folder_with_files != loaded_dictionary['folder_with_files']:
+                raise ValueError(f"json file '{json_file}' refers to a different directory than the supplied argument for files directory '{folder_with_files}'")
+        list_of_files = loaded_dictionary['list_of_files']
+    print(f"Loaded list of {len(list_of_files)} files from {json_file}")
+    return loaded_dictionary['folder_with_files'], list_of_files
 
 
-def store_list_of_files(json_file, folder_with_existing_files, valid_file_extensions, existing_files):
-    # store list of existing files
+def store_list_of_files(json_file, folder_with_files, valid_file_extensions, list_of_files):
+    # store list of files
     with open(json_file, 'w') as f:
         json.dump({
-            'folder_with_existing_files': folder_with_existing_files,
+            'folder_with_files': folder_with_files,
             'valid_file_extensions': valid_file_extensions,
-            'existing_files': existing_files
+            'list_of_files': list_of_files
         }, f)
-    print(f"Storing list of {len(existing_files)} existing files in {json_file}")
+    print(f"Storing list of {len(list_of_files)} files in {json_file}")
 
 
 def get_list_of_files(directory, valid_file_extensions, category):
